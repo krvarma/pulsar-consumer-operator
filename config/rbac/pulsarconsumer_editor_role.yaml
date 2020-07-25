@@ -1,0 +1,24 @@
+# permissions for end users to edit pulsarconsumers.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: pulsarconsumer-editor-role
+rules:
+- apiGroups:
+  - pulsar.pulsarconsumer.krvarma.com
+  resources:
+  - pulsarconsumers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - pulsar.pulsarconsumer.krvarma.com
+  resources:
+  - pulsarconsumers/status
+  verbs:
+  - get

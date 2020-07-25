@@ -1,0 +1,12 @@
+apiVersion: pulsar.pulsarconsumer.krvarma.com/v1
+kind: PulsarConsumer
+metadata:
+  name: pulsarconsumer-sample-3
+  labels:
+    app: pulsarconsumer
+spec:
+  # Add fields here
+  serverAddress: "pulsar://192.168.86.21:6650"
+  topic: "my-second-topic"
+  subscriptionName: "third-subscription"
+  replicas: 1

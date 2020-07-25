@@ -1,0 +1,7 @@
+domain: pulsarconsumer.krvarma.com
+repo: github.com/krvarma/pulsarconsumercrd
+resources:
+- group: pulsar
+  kind: PulsarConsumer
+  version: v1
+version: "2"

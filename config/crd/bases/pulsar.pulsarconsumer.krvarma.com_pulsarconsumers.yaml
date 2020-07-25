@@ -1,0 +1,99 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.5
+  creationTimestamp: null
+  name: pulsarconsumers.pulsar.pulsarconsumer.krvarma.com
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .status.server
+    name: Server
+    type: string
+  - JSONPath: .status.topic
+    name: Topic
+    type: string
+  - JSONPath: .status.subscription
+    name: Subscription
+    type: string
+  - JSONPath: .status.replicas
+    name: Replicas
+    type: integer
+  group: pulsar.pulsarconsumer.krvarma.com
+  names:
+    kind: PulsarConsumer
+    listKind: PulsarConsumerList
+    plural: pulsarconsumers
+    singular: pulsarconsumer
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: PulsarConsumer is the Schema for the pulsarconsumers API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: PulsarConsumerSpec defines the desired state of PulsarConsumer
+          properties:
+            replicas:
+              description: Number of replicas.
+              format: int32
+              type: integer
+            serverAddress:
+              description: Address of the pulsar server.
+              type: string
+            subscriptionName:
+              description: Name of the subscripton.
+              type: string
+            topic:
+              description: Name of the topic to listen.
+              type: string
+          type: object
+        status:
+          description: PulsarConsumerStatus defines the observed state of PulsarConsumer
+          properties:
+            replicas:
+              description: Number of replicas
+              format: int32
+              type: integer
+            server:
+              description: Server Address
+              type: string
+            subscription:
+              description: Name of the subscription
+              type: string
+            topic:
+              description: Name of the pulsar topic
+              type: string
+          required:
+          - replicas
+          - server
+          - subscription
+          - topic
+          type: object
+      type: object
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
