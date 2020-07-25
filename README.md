@@ -258,7 +258,9 @@ These commands will install the CRD to the cluster and run the Operator locally.
 
     kubectl apply -f config/samples/pulsar_v1_pulsarconsumer.yaml
 
-If everything goes well, you can see the pod running by issuing the kubectl get pods command.
+If everything goes well, you can see the pod running by issuing the `kubectl get pods` command.
+
+![pods](https://raw.githubusercontent.com/krvarma/pulsar-consumer-operator/master/images/3.png?token=AA46XGYJHPVR4UHX5AWUBFC7EW3E6)
 
 # Deploying the Operator
 
@@ -275,6 +277,8 @@ To deploy and runt the Operator into the local cluster, run the following comman
 Again if everything goes well, you can see the controller pod running. Please note that the system will create the pod in the namespace specified.
 
     kubectl get pods -n pulsarconsumercrd-system
+
+![pods](https://raw.githubusercontent.com/krvarma/pulsar-consumer-operator/master/images/4.png?token=AA46XG5QTPVVEIKUTRBZHE27EW3JM)
 
 To test whether the consumer is running or not, you can send a message to the topic specified. I have included a sample pulsar producer written in Golang.
 
