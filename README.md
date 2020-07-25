@@ -248,10 +248,40 @@ The kubebuilder uses make utility to build and deploy the Operator. There are ma
 7.  `make docker-build`:- Build the docker image
 8.  `make docker-push`:- Push the docker image to the specified registry
 
-To deploy and runt the Operator into the local cluster, run the following commands:
+
+To install the CRD and run the Operator, run the following commands.
 
     make install
-    make deploy
+    make run
 
-These commands will install the CRD and deploy the Operator into the cluster.
+These commands will install the CRD to the cluster and run the Operator locally. Now we can create a resource of kind PulsarConsumer. When we add an API, the kubebuilder will generate a sample YAML file of our Kind under the folder config/samples. We can create a resource of our Kind using this file.
 
+    kubectl apply -f config/samples/pulsar_v1_pulsarconsumer.yaml
+
+If everything goes well, you can see the pod running by issuing the kubectl get pods command.
+
+# Deploying the Operator
+
+To deploy the Operator to the cluster, we need to build and push the Operator image to the Docker registry.
+
+    make docker-build docker-push IMG=<registry>/<user>/pulsar-operator
+
+You should supply the values for the registry and user. This command will build and push the image to the specified image registry.
+
+To deploy and runt the Operator into the local cluster, run the following command:
+
+    make deploy IMG=<registry>/<user>/pulsar-operator
+
+Again if everything goes well, you can see the controller pod running. Please note that the system will create the pod in the namespace specified.
+
+    kubectl get pods -n pulsarconsumercrd-system
+
+To test whether the consumer is running or not, you can send a message to the topic specified. I have included a sample pulsar producer written in Golang.
+
+To send a message, run the following command.
+
+    env PULSAR_SERVER=pulsar://localhost:6650 env PULSAR_MESSAGE="Sample Message" env PULSAR_TOPIC="my-topic" pulsar-producer
+
+You can see the message logged to the console by running kubectl get logs command.
+
+I hope this article is helpful to kickstart writing Kubernetes Operator. Happy Coding!
