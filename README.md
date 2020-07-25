@@ -66,11 +66,9 @@ The --domain specifies the domain of our project. Every API group we define will
 
 This command will generate a lot of code. The folder structure looks like this.
 
-_Insert folder structure here_
+![Folder Structure](https://raw.githubusercontent.com/krvarma/pulsar-consumer-operator/master/images/1.png?token=AA46XGZ7D7SCOXABC43RTX27EWJK2)
 
 The generated project has the main.go file, Dockerfile, Makefile, config folder, etc. The entry point of the project is in main.go file. Let's take a look at the main.go file.
-
-_Insert main.go file contents here_
 
 As you can see, the generated code use [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) to create and start a new manager. The manager is responsible for running our controller, webhooks, etc.
 
@@ -78,9 +76,11 @@ The config folder contains all the configuration YAML files to launch our CRD. T
 
 The generated code does not contain our Kind and the controller that manages it. The following command will create the controller.
 
-_Insert kubebuilder command here_
+    kubebuilder create api --group consumer --version v1 --kind PulsarConsumer
 
 As you can see from the above command, to create the API, we need to specify API Group and Kind.
+
+![Folder Structure](https://raw.githubusercontent.com/krvarma/pulsar-consumer-operator/master/images/2.png?token=AA46XG4XX6BTTEKEVYUCMCK7EWJ2U)
 
 An API Group is a collection of related functionalities and has a version associated with it. Each version API Group has one or more API types called Kind. In our case, the Group is Consumer and Kind PulsarConsumer.
 
@@ -118,7 +118,94 @@ Basically what reconcile logic is:
 
 Here is the complete source code of the controller.
 
-_Controller Source Code_
+    /*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    */
+    
+    package v1
+    
+    import (
+    	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+    )
+    
+    // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
+    // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+    
+    // PulsarConsumerSpec defines the desired state of PulsarConsumer
+    type PulsarConsumerSpec struct {
+    	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
+    	// Important: Run "make" to regenerate code after modifying this file
+    
+    	// +kubebuilder:validation:Required
+    	// Address of the pulsar server.
+    	ServerAddress string `json:"serverAddress,omitempty"`
+    
+    	// +kubebuilder:validation:Required
+    	// Name of the topic to listen.
+    	Topic string `json:"topic,omitempty"`
+    
+    	// +kubebuilder:validation:Required
+    	// Name of the subscripton.
+    	SubscriptionName string `json:"subscriptionName,omitempty"`
+    
+    	// +kubebuilder:validation:Required
+    	// Number of replicas.
+    	Replicas *int32 `json:"replicas,omitempty"`
+    }
+    
+    // PulsarConsumerStatus defines the observed state of PulsarConsumer
+    type PulsarConsumerStatus struct {
+    	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
+    	// Important: Run "make" to regenerate code after modifying this file
+    
+    	// Server Address
+    	Server string `json:"server"`
+    	// Name of the pulsar topic
+    	Topic string `json:"topic"`
+    	// Name of the subscription
+    	Subscription string `json:"subscription"`
+    	// Number of replicas
+    	Replicas *int32 `json:"replicas"`
+    }
+    
+    // +kubebuilder:object:root=true
+    // +kubebuilder:subresource:status
+    // +kubebuilder:printcolumn:JSONPath=".status.server",name="Server",type="string"
+    // +kubebuilder:printcolumn:JSONPath=".status.topic",name="Topic",type="string"
+    // +kubebuilder:printcolumn:JSONPath=".status.subscription",name="Subscription",type="string"
+    // +kubebuilder:printcolumn:JSONPath=".status.replicas",name="Replicas",type="integer"
+    
+    // PulsarConsumer is the Schema for the pulsarconsumers API
+    type PulsarConsumer struct {
+    	metav1.TypeMeta   `json:",inline"`
+    	metav1.ObjectMeta `json:"metadata,omitempty"`
+    
+    	Spec   PulsarConsumerSpec   `json:"spec,omitempty"`
+    	Status PulsarConsumerStatus `json:"status,omitempty"`
+    }
+    
+    // +kubebuilder:object:root=true
+    
+    // PulsarConsumerList contains a list of PulsarConsumer
+    type PulsarConsumerList struct {
+    	metav1.TypeMeta `json:",inline"`
+    	metav1.ListMeta `json:"metadata,omitempty"`
+    	Items           []PulsarConsumer `json:"items"`
+    }
+    
+    func init() {
+    	SchemeBuilder.Register(&PulsarConsumer{}, &PulsarConsumerList{})
+    }
 
 # Idempotency of the Operator
 
@@ -167,3 +254,4 @@ To deploy and runt the Operator into the local cluster, run the following comman
     make deploy
 
 These commands will install the CRD and deploy the Operator into the cluster.
+
