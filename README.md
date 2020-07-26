@@ -4,7 +4,7 @@ Kubernetes is an open-source container orchestration project and is one of the m
 
 # Extending Kubernetes
 
-One of the many features of Kubernetes that makes it great is its Extensibility. Almost everything in Kubernetes is extensible. The [official documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/) describes the following seven different extension points in the Kubernetes system.
+One of the many features of Kubernetes that makes it great is its Extensibility. Almost everything in Kubernetes is extensible. The [official documentation]a(https://kubernetes.io/docs/concepts/extend-kubernetes/) describes the following seven different extension points in the Kubernetes system.
 
 1.  [Kubectl plugins](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/):- Kubectl plugins are nothing but an executable file with name starts with _kubectl-_
 2.  [API Access Extensions](https://kubernetes.io/docs/concepts/extend-kubernetes/#api-access-extensions):- API Access Extensions are extensions that extend different stages of API Server. We can use this extension to implement custom authentication, automatic sidecar injection, etc.
@@ -69,6 +69,77 @@ This command will generate a lot of code. The folder structure looks like this.
 ![Folder Structure](https://raw.githubusercontent.com/krvarma/pulsar-consumer-operator/master/images/1.png?token=AA46XGZ7D7SCOXABC43RTX27EWJK2)
 
 The generated project has the main.go file, Dockerfile, Makefile, config folder, etc. The entry point of the project is in main.go file. Let's take a look at the main.go file.
+
+    /*
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    */
+    
+    package main
+    
+    import (
+    	"flag"
+    	"os"
+    
+    	"k8s.io/apimachinery/pkg/runtime"
+    	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+    	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+    	ctrl "sigs.k8s.io/controller-runtime"
+    	"sigs.k8s.io/controller-runtime/pkg/log/zap"
+    	// +kubebuilder:scaffold:imports
+    )
+    
+    var (
+    	scheme   = runtime.NewScheme()
+    	setupLog = ctrl.Log.WithName("setup")
+    )
+    
+    func init() {
+    	_ = clientgoscheme.AddToScheme(scheme)
+    
+    	// +kubebuilder:scaffold:scheme
+    }
+    
+    func main() {
+    	var metricsAddr string
+    	var enableLeaderElection bool
+    	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
+    	flag.BoolVar(&enableLeaderElection, "enable-leader-election", false,
+    		"Enable leader election for controller manager. "+
+    			"Enabling this will ensure there is only one active controller manager.")
+    	flag.Parse()
+    
+    	ctrl.SetLogger(zap.New(zap.UseDevMode(true)))
+    
+    	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
+    		Scheme:             scheme,
+    		MetricsBindAddress: metricsAddr,
+    		Port:               9443,
+    		LeaderElection:     enableLeaderElection,
+    		LeaderElectionID:   "ba84c7bc.pulsarconsumer.krvarma.com",
+    	})
+    	if err != nil {
+    		setupLog.Error(err, "unable to start manager")
+    		os.Exit(1)
+    	}
+    
+    	// +kubebuilder:scaffold:builder
+    
+    	setupLog.Info("starting manager")
+    	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+    		setupLog.Error(err, "problem running manager")
+    		os.Exit(1)
+    	}
+    }
 
 As you can see, the generated code use [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) to create and start a new manager. The manager is responsible for running our controller, webhooks, etc.
 
@@ -217,12 +288,7 @@ The Operator should always expect multiple calls to reconcile unchanged resource
 
 While going through the code, you might have noticed the comments start with + symbol. These are particular comments called Marker comments. Marker comments always start with + followed by marker name and optional parameters.
 
-The kubebuilder tool uses `controller-gen` for generating utility codes and YAML files. The kubebuilder generates a Makefile to build and run the Operator.
-
-The Makefile has two primary targets, _manifests_ and _generate_.
-
-1.  `Make Manifests`:- Generates Kubernetes YAML files for CRD, Webhook, RABC, etc.
-2.  `Make Generate`:- Generate codes for controllers, etc.
+The kubebuilder tool uses `controller-gen` for generating utility codes and YAML files. The kubebuilder generates a Makefile to build and run the Operator. The `controller-gen` framework sees the marker comments; the framework parses the marker comments and generates code based on the marker.
 
 You can see the marker comments in the Spec definition. The following marker comment ensures that the particular field is mandatory.
 
