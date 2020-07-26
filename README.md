@@ -1,5 +1,7 @@
 # Extending Kubernetes - Part 1 - Custom Operator
 
+![Cover Image](https://raw.githubusercontent.com/krvarma/pulsar-consumer-operator/master/images/extending_kubernetes_operators.png?token=AA46XG3QPTTBSKWV63LBDF27E3FK4)
+
 Kubernetes is an open-source container orchestration project and is one of the most successful projects in the Cloud Native era. Kubernetes started as an internal project at Google. Google open-sourced Kubernetes in 2014. Since then, it has emerged as the most popular application platform in the cloud and an integral part of Cloud Native development.
 
 Extending Kubernetes is a series of articles that explore how to extend the Kubernetes system. Starting with Operators, we will explore many other ways to extend the functionalities of the Kubernetes system.
@@ -55,7 +57,7 @@ Inside the reconcile loop, we implement our logic to maintain the state of the r
 
 # Pulsar Consumer Operator
 
-In this article, we will try to create a basic application and create a CRD to deploy it on Kubernetes. We will create a Pulsar Consumer in Golang and run it on Kubernetes. The consumer is a basic one that will consume a Pulsar topic and log the message to the console. In the real world, it will be much more complicated, but for the sake of simplicity, we will use a simple application.
+In this article, we will try to create a basic application and create a CRD to deploy it on Kubernetes. We will reuse a Pulsar Consumer from my previous article [Creating an External Scaler for KEDA](https://medium.com/@krvarma/creating-an-external-scaler-for-keda-31b314b5c4a3). The consumer is a basic one that will consume a Pulsar topic and log the message to the console. In the real world, it will be much more complicated, but for the sake of simplicity, we will use a simple application.
 
 For this purpose, we will create a custom resource **PulsarConsumer**. This CRD can be used to deploy a Pulsar Consumer application to the Kubernetes.
 
