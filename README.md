@@ -39,7 +39,7 @@ For example, you have an application that connects to a database and store/retri
 
 # Reconciliation Loop
 
-As explained in the previous, a custom controller manages the associated custom resource and is a client of Kubernetes API Server. When a new CR object created or modified, the API Serer notifies our Operator. Then the Operator starts running a loop that watches the resource for any change in the actual and desired state. This loop is called the reconciliation loop.
+As explained in the previous paragraph, a custom controller manages the associated custom resource and is a client of Kubernetes API Server. When a new CR object created or modified, the API Serer notifies our Operator. Then the Operator starts running a loop that watches the resource for any change in the actual and desired state. This loop is called the reconciliation loop.
 
 Kubernetes watches the current state, and if there any change in the desired state, then try to reconcile the object's state.
 
