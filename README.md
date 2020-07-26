@@ -35,17 +35,17 @@ The Operator is a pattern introduced by CoreOS in 2016. This pattern enables you
 
 In Kubernetes, the Operator is a software extension that makes use of Custom Resource to manage an application and its components. Operators are clients of Kubernetes API that controls the custom resource. An Operator is an application-specific controller that manages the state of a custom resource.
 
-For example, you have an application that connects to a database and store/retrieve data and performs some business logic. To deploy this application, you have the deploy the database, the app, and its different components. Usually, engineers perform these tasks. We can automate these tasks by writing an Operator.
+For example, you have an application that connects to a database and store/retrieve data and performs some business logic. To deploy this application, you have the deploy the database, the app, and it's different components. Usually, engineers perform these tasks. We can automate these tasks by writing an Operator.
 
 # Reconciliation Loop
 
-As explained in the previous paragraph, a custom controller manages the associated custom resource and is a client of Kubernetes API Server. When a new CR object created or modified, the API Serer notifies our Operator. Then the Operator starts running a loop that watches the resource for any change in the actual and desired state. This loop is called the reconciliation loop.
+As explained in the previous paragraph, a custom controller manages the associated custom resource and is a client of Kubernetes API Server. When a new CR object created or modified, the API Server notifies our Operator. Then the Operator starts running a loop that watches the resource for any change in the actual and desired state. This loop is called the reconciliation loop.
 
 Kubernetes watches the current state, and if there any change in the desired state, then try to reconcile the object's state.
 
 # Writing an Operator
 
-There are two frameworks to write operators, [operator-sdk](https://github.com/operator-framework/operator-sdk) and [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder). Both are go languaged based tools and use [controller-tools](https://github.com/kubernetes-sigs/controller-tools) and [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) libraries internally. There is also a [work in progress to combine](https://github.com/kubernetes-sigs/kubebuilder/projects/7) both SDK to create a single one. Both SDKs are almost similar with some minimal differences. This [issue discusses](https://github.com/operator-framework/operator-sdk/issues/1758) the main difference between the tools.
+There are two frameworks to write operators, [operator-sdk](https://github.com/operator-framework/operator-sdk) and [kubebuilder](https://github.com/kubernetes-sigs/kubebuilder). Both are Golang based tools and use [controller-tools](https://github.com/kubernetes-sigs/controller-tools) and [controller-runtime](https://github.com/kubernetes-sigs/controller-runtime) libraries internally. There is also a [work in progress to combine](https://github.com/kubernetes-sigs/kubebuilder/projects/7) both SDK to create a single one. Both SDKs are almost similar with some minimal differences. This [issue discusses](https://github.com/operator-framework/operator-sdk/issues/1758) the main difference between the tools.
 
 Both these frameworks generate lots of boilerplate code for creating a CRD. The generated code is somewhat similar. There are a couple of significant differences; the operator-sdk supports [Helm](https://docs.openshift.com/container-platform/4.2/operators/operator_sdk/osdk-helm.html) and [Ansible](https://docs.openshift.com/container-platform/4.2/operators/operator_sdk/osdk-ansible.html) operators.
 
@@ -186,7 +186,7 @@ As you can see, the file defines our PulsarConsumer reconciler definition. The m
 
 Basically what reconcile logic is:
 
-1.  *Query the named object*: The Reconcile function receives a parameter of type Request. The request parameter contains the namespaced name of the specified object. We query the system to get the PulsarConssumer with the specified name using the `Get` method.
+1.  *Query the named object*: The Reconcile function receives a parameter of type Request. The request parameter contains the namespaced name of the specified object. We query the system to get the PulsarConsumer with the specified name using the `Get` method.
 2.  *Retrieve the object*: Once we have the PulsarConsumer with the specified name. We will check whether we already have an object in the system.
 3.  *Create if it is not present*: If the client returns a not found error, it means an object with the specified name is not there in the system. So we need to create it and update the status. If the error is something else, we should gracefully return.
 4.  *Check current state*: If there is no error, then it means the specified object is present in the system. We should check the current state and the desired state and see whether it is equal or not. This part is a little bit tricky. Many blogs suggest using `reflect.DeepEqual`, but this will not work since the deployment controller or other Kubernetes components will add some default fields to the Spec object, which will result in always false situations while using `reflect.DeepEqual`. After going through different blogs and kubebuilder issues, I found [this particular issue](https://github.com/kubernetes-sigs/kubebuilder/issues/592). [One of the comments](https://github.com/kubernetes-sigs/kubebuilder/issues/592#issuecomment-625738183) suggests using `equality.Semantic.DeepDerivative` since it will compare only non-zero fields on the structure. Using the proposed solution worked without any issues.
