@@ -2,9 +2,12 @@
 
 Kubernetes is an open-source container orchestration project and is one of the most successful projects in the Cloud Native era. Kubernetes started as an internal project at Google. Google open-sourced Kubernetes in 2014. Since then, it has emerged as the most popular application platform in the cloud and an integral part of Cloud Native development.
 
-# Extending Kubernetes
+Extending Kubernetes is a series of articles that explore how to extend the Kubernetes system. Starting with Operators, we will explore many other ways to extend the functionalities of the Kubernetes system.
 
-One of the many features of Kubernetes that makes it great is its Extensibility. Almost everything in Kubernetes is extensible. The [official documentation]a(https://kubernetes.io/docs/concepts/extend-kubernetes/) describes the following seven different extension points in the Kubernetes system.
+# Extending Kubernetes
+Many features make Kubernetes great. Some of them are, the ability to automate various manual processes, deploy and scale your application seamlessly, roll out & roll back application updates, manage secrets, etc. 
+
+Another great feature of Kubernetes that makes it great is its Extensibility. Almost everything in Kubernetes is extensible. The [official documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/) describes the following seven different extension points in the Kubernetes system.
 
 1.  [Kubectl plugins](https://kubernetes.io/docs/tasks/extend-kubectl/kubectl-plugins/):- Kubectl plugins are nothing but an executable file with name starts with _kubectl-_
 2.  [API Access Extensions](https://kubernetes.io/docs/concepts/extend-kubernetes/#api-access-extensions):- API Access Extensions are extensions that extend different stages of API Server. We can use this extension to implement custom authentication, automatic sidecar injection, etc.
@@ -354,4 +357,4 @@ To send a message, run the following command.
 
 You can see the message logged to the console by running kubectl get logs command.
 
-I hope this article is helpful to kickstart writing Kubernetes Operator. Happy Coding!
+I hope this article is helpful to kickstart writing Kubernetes Operator. In the upcoming part of the article, we will explore other ways to extend the Kubernetes system. Till then, Happy Coding!
