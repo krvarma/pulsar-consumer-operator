@@ -359,4 +359,13 @@ To send a message, run the following command.
 
 You can see the message logged to the console by running kubectl get logs command.
 
+# Further reading
+There are many articles about Operators out there. The following links are some of them.
+
+1.  [Official Documentation](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
+2.  [Helm Operators using Operator-SDK](https://www.openshift.com/blog/make-a-kubernetes-operator-in-15-minutes-with-helm)
+3.  [RedHat documentation](https://www.redhat.com/en/topics/containers/what-is-a-kubernetes-operator)
+
+There is also a public registry that hosts a whole bunch of Operators, [OperatorHub](https://operatorhub.io/). It s a collaborative effort of RedHat, AWS, Google, Microsoft, etc.. Operator Framework is hosting an [Awesome List](https://github.com/operator-framework/awesome-operators) of operators, many of them are open source.
+
 I hope this article is helpful to kickstart writing Kubernetes Operator. In the upcoming part of the article, we will explore other ways to extend the Kubernetes system. Till then, Happy Coding!
